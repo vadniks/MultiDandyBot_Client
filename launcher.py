@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox as msg
 
+from server import Server
+
 
 class Launcher:
     nameEn: tk.Entry
@@ -22,7 +24,14 @@ class Launcher:
         S.scriptBx.pack()
 
     def onLoginBt(S):
-        print(len(S.nameEn.get()))
-        print(len(S.scriptBx.get('1.0', 'end-1c')))
-        if len(S.nameEn.get()) == 0 or len(S.scriptBx.get('1.0', 'end-1c')) == 0:
+        name = S.nameEn.get()
+        script = S.scriptBx.get('1.0', 'end-1c')
+
+        if len(name) == 0 or len(script) == 0:
             msg.showerror('Error', 'Text fields are empty')
+            return
+
+        sid = Server.newSession(name, script)
+        if sid is None:
+            msg.showerror('Error', 'Unable to retrieve session')
+            exit(1)
