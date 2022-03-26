@@ -1,43 +1,39 @@
 import tkinter as tk
 from tkinter import messagebox as msg
-
-from main import IApp
-from sync import Sync
+import sync as sc
 
 
-# noinspection PyMethodParameters
-class Launcher:
-    nameEn: tk.Entry
-    scriptBx: tk.Text
-    app: IApp
+nameEn: tk.Entry
+scriptBx: tk.Text
 
-    def __init__(S, frame: tk.Frame, app: IApp):
-        S.app = app
 
-        mainLb = tk.Label(frame, text='Welcome', font=("TkDefaultFont", 16))
+def init(frame: tk.Frame):
+    global nameEn, scriptBx
 
-        loginBt = tk.Button(frame, text='Login', width=30)
-        loginBt.configure(command=S.onLoginBt)
+    mainLb = tk.Label(frame, text='Welcome', font=("TkDefaultFont", 16))
 
-        S.nameEn = tk.Entry(frame)
-        S.scriptBx = tk.Text(frame)
+    loginBt = tk.Button(frame, text='Login', width=30)
+    loginBt.configure(command=onLoginBt)
 
-        mainLb.pack()
-        loginBt.pack()
-        S.nameEn.pack()
-        S.scriptBx.pack()
+    nameEn = tk.Entry(frame)
+    scriptBx = tk.Text(frame)
 
-    def onLoginBt(S):
-        name = S.nameEn.get()
-        script = S.scriptBx.get('1.0', 'end-1c')
+    mainLb.pack()
+    loginBt.pack()
+    nameEn.pack()
+    scriptBx.pack()
 
-        if len(name) == 0 or len(script) == 0:
-            msg.showerror('Error', 'Text fields are empty')
-            return
 
-        sid = Sync.newSession(name, script)
-        if sid is None:
-            msg.showerror('Error', 'Unable to retrieve session')
-            exit(1)
+def onLoginBt():
+    global nameEn, scriptBx
 
-        S.app.setSessionId(sid)
+    name = nameEn.get()
+    script = scriptBx.get('1.0', 'end-1c')
+
+    if len(name) == 0 or len(script) == 0:
+        msg.showerror('Error', 'Text fields are empty')
+        return
+
+    if not sc.newSession(name, script):
+        msg.showerror('Error', 'Unable to retrieve session')
+        exit(1)

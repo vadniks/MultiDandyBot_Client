@@ -1,29 +1,18 @@
 import tkinter as tk
-from abc import ABC, abstractmethod
-
-import launcher as lch
+import launcher as lc
 
 
 WIDTH = 1000
 HEIGHT = 600
 
 
-class IApp(ABC):
-    @abstractmethod
-    def setSessionId(S, sid: int): raise NotImplementedError
-
-
 # noinspection PyMethodParameters
-class App(tk.Frame, IApp):
-    sessionId: int
+class App(tk.Frame):
 
     def __init__(S, master):
         super(App, S).__init__(master)
         S.pack()
-        lch.Launcher(S, S)
-
-    def setSessionId(S, sid: int):
-        S.sessionId = sid
+        lc.init(S)
 
 
 if __name__ == '__main__':
