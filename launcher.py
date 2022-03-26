@@ -61,15 +61,11 @@ def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
     subtxLb = Label(frame, font=("TkDefaultFont", 10), text='Waiting for players...')
     subtxLb.pack()
 
-    soloBt = Button(frame, text='Play solo', width=30, command=soloGame)
+    soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame(True))
     soloBt.pack()
 
-    waitForPlayers()
+    sc.waitForPlayers(lambda: startGame(False))
 
 
-def soloGame():
-    pass
-
-
-def waitForPlayers():
+def startGame(solo: bool):
     pass
