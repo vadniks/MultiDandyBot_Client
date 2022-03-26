@@ -1,4 +1,4 @@
-import tkinter as tk
+from tkinter import Tk, Frame
 import launcher as lc
 
 
@@ -7,7 +7,7 @@ HEIGHT = 600
 
 
 # noinspection PyMethodParameters
-class App(tk.Frame):
+class App(Frame):
 
     def __init__(S, master):
         super(App, S).__init__(master)
@@ -16,7 +16,7 @@ class App(tk.Frame):
 
 
 if __name__ == '__main__':
-    root = tk.Tk()
+    root = Tk()
     root.title('Client')
     root.geometry(f'{WIDTH}x{HEIGHT}')
 
