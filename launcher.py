@@ -9,13 +9,15 @@ class State(Enum):
     LOBBY = 1
 
 
+frame: Frame
 mainLb: Label
 
 state: State = State.LAUNCH
 
 
-def init(frame: Frame):
-    global mainLb
+def init(_frame: Frame):
+    global frame, mainLb
+    frame = _frame
 
     mainLb = Label(frame, text='Welcome', font=("TkDefaultFont", 16))
 
@@ -46,7 +48,7 @@ def onLoginBt(nameEn: Entry, scriptBx: Text, loginBt: Button):
 
 
 def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
-    global mainLb, state
+    global mainLb, state, frame
     state = State.LOBBY
 
     mainLb.configure(text='Lobby')
@@ -55,3 +57,19 @@ def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
     nameEn.pack_forget()
     scriptBx.pack_forget()
     loginBt.pack_forget()
+
+    subtxLb = Label(frame, font=("TkDefaultFont", 10), text='Waiting for players...')
+    subtxLb.pack()
+
+    soloBt = Button(frame, text='Play solo', width=30, command=soloGame)
+    soloBt.pack()
+
+    waitForPlayers()
+
+
+def soloGame():
+    pass
+
+
+def waitForPlayers():
+    pass
