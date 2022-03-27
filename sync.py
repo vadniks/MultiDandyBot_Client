@@ -1,13 +1,13 @@
-import asyncio as ac
 from typing import Callable
 import requests as rq
 import json
 from time import sleep
+import threading as th
 
 
 sid: int
 HOST = 'http://127.0.0.1:5000'
-THRESHOLD = 0.1 # seconds
+THRESHOLD = 0.5 # seconds
 
 
 def newSession(name: str, script: str) -> bool:
@@ -40,18 +40,14 @@ def _checkForPlayers() -> bool:
 
 
 def waitForPlayers(callback: Callable):
-    loop = ac.get_event_loop()
-    onExit = lambda: loop.stop()
-
-    async def wfp():
+    def wfp():
         while True:
             print('a')
             if _checkForPlayers():
                 callback()
-                onExit()
                 break
             sleep(THRESHOLD)
 
-    loop.create_task(wfp()) # TODO
-    loop.close()
-
+    thread = th.Thread(target=wfp)
+    thread.daemon = True
+    thread.start()
