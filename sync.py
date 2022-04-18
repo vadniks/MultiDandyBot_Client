@@ -34,18 +34,19 @@ def _checkForPlayers() -> bool:
     if rsp.status_code != 200:
         return False
     elif bool(rsp.text):
-        return False
+        return False #True
     else:
         return False
 
 
-def waitForPlayers(callback: Callable):
+def waitForPlayers(onFinish: Callable, onWait: Callable = None, args=None):
     def wfp():
         while True:
-            print('a')
             if _checkForPlayers():
-                callback()
+                onFinish()
                 break
+            if onWait is not None:
+                onWait(args)
             sleep(THRESHOLD)
 
     thread = th.Thread(target=wfp)

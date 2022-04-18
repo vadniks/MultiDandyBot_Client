@@ -2,6 +2,7 @@ from tkinter import Frame, Label, Entry, Text, Button
 from enum import Enum
 from tkinter import messagebox as msg
 import sync as sc
+import core.main as cr
 
 
 class State(Enum):
@@ -64,8 +65,18 @@ def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
     soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame(True))
     soloBt.pack()
 
-    sc.waitForPlayers(lambda: startGame(False))
+    sc.waitForPlayers(lambda: startGame(False), onWait, subtxLb)
+
+
+dx = 0
+
+
+def onWait(subtxLb: Label):
+    global dx
+    tx = subtxLb['text']
+    subtxLb['text'] = tx[:-1] + {0: '|', 1: '/', 2: '-', 3: '\\'}[dx]
+    dx = 0 if dx == 3 else dx + 1
 
 
 def startGame(solo: bool):
-    pass
+    cr.start_game(frame)
