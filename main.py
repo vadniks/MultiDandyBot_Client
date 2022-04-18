@@ -12,7 +12,7 @@ class App(Frame):
     def __init__(S, master):
         super(App, S).__init__(master)
         S.pack()
-        lc.init(S)
+        lc.init(S, master)
 
 
 if __name__ == '__main__':

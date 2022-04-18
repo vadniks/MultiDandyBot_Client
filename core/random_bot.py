@@ -1,4 +1,10 @@
-﻿import random
+﻿"""
+MIT License
+Copyright (c) 2021 Peter Sovietov
+https://github.com/true-grue/DandyBot
+"""
+
+import random
 
 
 def script(check, x, y):

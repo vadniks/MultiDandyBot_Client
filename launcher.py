@@ -1,4 +1,5 @@
-from tkinter import Frame, Label, Entry, Text, Button
+import tkinter
+from tkinter import Frame, Label, Entry, Text, Button, Tk
 from enum import Enum
 from tkinter import messagebox as msg
 import sync as sc
@@ -11,14 +12,16 @@ class State(Enum):
 
 
 frame: Frame
+root: Tk
 mainLb: Label
 
 state: State = State.LAUNCH
 
 
-def init(_frame: Frame):
-    global frame, mainLb
+def init(_frame: Frame, _root: Tk):
+    global frame, mainLb, root
     frame = _frame
+    root = _root
 
     mainLb = Label(frame, text='Welcome', font=("TkDefaultFont", 16))
 
@@ -62,10 +65,12 @@ def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
     subtxLb = Label(frame, font=("TkDefaultFont", 10), text='Waiting for players...')
     subtxLb.pack()
 
-    soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame(True))
+    def script(): return scriptBx.get('1.0', 'end')
+
+    soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame(True, script()))
     soloBt.pack()
 
-    sc.waitForPlayers(lambda: startGame(False), onWait, subtxLb)
+    sc.waitForPlayers(lambda: startGame(False, scriptBx.get('1.0', 'end')), lambda: onWait(subtxLb))
 
 
 dx = 0
@@ -78,5 +83,6 @@ def onWait(subtxLb: Label):
     dx = 0 if dx == 3 else dx + 1
 
 
-def startGame(solo: bool):
-    cr.start_game(frame)
+def startGame(solo: bool, script: str):
+
+    cr.start_game(frame, lambda w, h: root.geometry(f'{w}x{h}'))

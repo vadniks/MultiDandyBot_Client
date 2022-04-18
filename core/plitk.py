@@ -1,4 +1,10 @@
-﻿import json
+﻿"""
+MIT License
+Copyright (c) 2021 Peter Sovietov
+https://github.com/true-grue/DandyBot
+"""
+
+import json
 from pathlib import Path
 import tkinter as tk
 

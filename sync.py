@@ -39,14 +39,14 @@ def _checkForPlayers() -> bool:
         return False
 
 
-def waitForPlayers(onFinish: Callable, onWait: Callable = None, args=None):
+def waitForPlayers(onFinish: Callable, onWait: Callable = None):
     def wfp():
         while True:
             if _checkForPlayers():
                 onFinish()
                 break
             if onWait is not None:
-                onWait(args)
+                onWait()
             sleep(THRESHOLD)
 
     thread = th.Thread(target=wfp)

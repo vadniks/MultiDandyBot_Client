@@ -1,13 +1,19 @@
-﻿import time
-import sys
+﻿"""
+MIT License
+Copyright (c) 2021 Peter Sovietov
+https://github.com/true-grue/DandyBot
+"""
+
+import time
 import json
 from importlib import import_module
 from pathlib import Path
 from random import shuffle
 import tkinter as tk
+from typing import Callable
+
 from core.plitk import load_tileset, PliTk
 
-SCALE = 1
 DELAY = 50
 
 UP = "up"
@@ -23,14 +29,15 @@ EMPTY = "empty"
 
 
 class Board:
-    def __init__(self, game, canvas, label):
+    def __init__(self, game, canvas, label, onLvlLoad):
         self.game = game
         self.canvas = canvas
         self.label = label
         self.tileset = load_tileset(game["tileset"])
-        self.screen = PliTk(canvas, 0, 0, 0, 0, self.tileset, SCALE)
+        self.screen = PliTk(canvas, 0, 0, 0, 0, self.tileset, 1)
         self.load_players()
         self.level_index = 0
+        self.onLvlLoad = onLvlLoad
         self.load_level()
 
     def load_players(self):
@@ -49,8 +56,12 @@ class Board:
         cols, rows = len(data[0]), len(data)
         self.map = [[data[y][x] for y in range(rows)] for x in range(cols)]
         self.has_player = [[None for y in range(rows)] for x in range(cols)]
-        self.canvas.config(width=cols * self.tileset["tile_width"] * SCALE,
-                           height=rows * self.tileset["tile_height"] * SCALE)
+
+        width = cols * self.tileset["tile_width"]
+        height = rows * self.tileset["tile_height"]
+        self.onLvlLoad(width, height)
+
+        self.canvas.config(width=width, height=height)
         self.level["gold"] = sum(sum(int(cell)
             if cell.isdigit() else 0 for cell in row) for row in data)
         self.screen.resize(cols, rows)
@@ -160,7 +171,7 @@ class Player:
             self.board.take_gold(self.x, self.y)
 
 
-def start_game(root):
+def start_game(root, onLvlLoad: Callable):
     def update():
         t = time.time()
         if board.play():
@@ -177,6 +188,6 @@ def start_game(root):
     label.pack(side=tk.RIGHT, anchor="n")
     filename = "core/game.json"
     game = json.loads(Path(filename).read_text())
-    board = Board(game, canvas, label)
+    board = Board(game, canvas, label, onLvlLoad)
     root.after(0, update)
     root.mainloop()
