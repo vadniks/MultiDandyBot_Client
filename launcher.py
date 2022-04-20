@@ -2,6 +2,8 @@ import tkinter
 from tkinter import Frame, Label, Entry, Text, Button, Tk
 from enum import Enum
 from tkinter import messagebox as msg
+from typing import Callable
+
 import sync as sc
 import core.main as cr
 
@@ -51,8 +53,12 @@ def onLoginBt(nameEn: Entry, scriptBx: Text, loginBt: Button):
         lobby(nameEn, scriptBx, loginBt)
 
 
+subtxLb: Label
+soloBt: Button
+
+
 def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
-    global mainLb, state, frame
+    global mainLb, state, frame, subtxLb, soloBt
     state = State.LOBBY
 
     mainLb.configure(text='Lobby')
@@ -70,10 +76,18 @@ def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
     soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame(True, script()))
     soloBt.pack()
 
-    sc.waitForPlayers(lambda: startGame(False, scriptBx.get('1.0', 'end')), lambda: onWait(subtxLb))
+    sc.waitForPlayers(lambda: startGame(False, scriptBx.get('1.0', 'end')),
+                      lambda: onWait(subtxLb))
 
 
 dx = 0
+
+
+def clearFrame():
+    global mainLb, subtxLb, soloBt
+    mainLb.pack_forget()
+    subtxLb.pack_forget()
+    soloBt.pack_forget()
 
 
 def onWait(subtxLb: Label):
@@ -84,5 +98,5 @@ def onWait(subtxLb: Label):
 
 
 def startGame(solo: bool, script: str):
-
+    clearFrame()
     cr.start_game(frame, lambda w, h: root.geometry(f'{w}x{h}'))
