@@ -1,10 +1,4 @@
 {
-  "players": [
-    "core.user_bot",
-    "core.random_bot",
-    "core.random_bot",
-    "core.random_bot"
-  ],
   "levels": [
     {
       "map": 0,

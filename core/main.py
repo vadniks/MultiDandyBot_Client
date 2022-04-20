@@ -37,8 +37,9 @@ class Board:
         self.screen = PliTk(canvas, 0, 0, 0, 0, self.tileset, 1)
         self.load_players()
         self.level_index = 0
-        self.onResize = onResize
         self.load_level()
+
+        self.onResize = onResize
 
     def load_players(self):
         self.players = []

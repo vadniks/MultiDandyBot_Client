@@ -1,8 +1,7 @@
-import tkinter
 from tkinter import Frame, Label, Entry, Text, Button, Tk
 from enum import Enum
 from tkinter import messagebox as msg
-from typing import Callable
+from typing import List
 
 import sync as sc
 import core.main as cr
@@ -73,11 +72,15 @@ def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
 
     def script(): return scriptBx.get('1.0', 'end')
 
-    soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame(True, script()))
+    soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame([script()]))
     soloBt.pack()
 
-    sc.waitForPlayers(lambda: startGame(False, scriptBx.get('1.0', 'end')),
-                      lambda: onWait(subtxLb))
+    def startMulti():
+
+        startGame([script()])
+
+    # noinspection PyTypeChecker
+    sc.waitForPlayers(startMulti(), lambda: onWait(subtxLb)) # callable -> None
 
 
 dx = 0
@@ -97,6 +100,8 @@ def onWait(subtxLb: Label):
     dx = 0 if dx == 3 else dx + 1
 
 
-def startGame(solo: bool, script: str):
+def startGame(scripts: List[str]):
+    solo = len(scripts) == 0
     clearFrame()
-    cr.start_game(frame, lambda w, h: root.geometry(f'{w}x{h}'))
+
+    # cr.start_game(frame, lambda w, h: root.geometry(f'{w}x{h}'))
