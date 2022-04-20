@@ -30,13 +30,14 @@ def newSession(name: str, script: str) -> bool:
 
 def _checkForPlayers() -> List[str] | None:
     try:
-        rsp: rq.Response = rq.post(f'{HOST}/chk/{pid}')
+        rsp: rq.Response = rq.get(f'{HOST}/chk/{pid}')
     except Exception: return None
 
     if rsp.status_code != 200:
-        return False
+        return None
     else:
-        print(rsp.text)
+        a = json.loads(rsp.text)
+        print(a, len(a))
         return False
 
 
@@ -53,3 +54,9 @@ def waitForPlayers(onFinish: Callable, onWait: Callable = None):
     thread = th.Thread(target=wfp)
     thread.daemon = True
     thread.start()
+
+
+def quitt():
+    try:
+        rsp: rq.Response = rq.post(f'{HOST}/qt/{pid}')
+    except Exception: pass

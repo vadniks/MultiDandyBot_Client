@@ -1,5 +1,6 @@
 from tkinter import Tk, Frame
 import launcher as lc
+import sync as sc
 
 
 WIDTH = 1000
@@ -22,3 +23,5 @@ if __name__ == '__main__':
 
     app = App(root)
     app.mainloop()
+
+    sc.quitt()
