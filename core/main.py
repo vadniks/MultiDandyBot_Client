@@ -40,9 +40,6 @@ class Board:
         self.onResize = onResize
         self.load_level()
 
-        self.width = 0
-        self.height = 0
-
     def load_players(self):
         self.players = []
         for i, name in enumerate(self.game["players"]):
@@ -60,10 +57,10 @@ class Board:
         self.map = [[data[y][x] for y in range(rows)] for x in range(cols)]
         self.has_player = [[None for y in range(rows)] for x in range(cols)]
 
-        self.width = cols * self.tileset["tile_width"]
-        self.height = rows * self.tileset["tile_height"]
+        width = cols * self.tileset["tile_width"]
+        height = rows * self.tileset["tile_height"]
 
-        self.canvas.config(width=self.width, height=self.height)
+        self.canvas.config(width=width, height=height)
         self.level["gold"] = sum(sum(int(cell)
             if cell.isdigit() else 0 for cell in row) for row in data)
         self.screen.resize(cols, rows)
@@ -75,7 +72,7 @@ class Board:
         self.update_score()
 
         self.label.update()
-        self.onResize(self.width + self.label.winfo_reqwidth(), self.height)
+        self.onResize(width + self.label.winfo_reqwidth(), height)
 
     def get(self, x, y):
         if x < 0 or y < 0 or x >= self.screen.cols or y >= self.screen.rows:
