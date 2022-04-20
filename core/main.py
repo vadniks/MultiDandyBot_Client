@@ -11,6 +11,7 @@ from pathlib import Path
 from random import shuffle
 import tkinter as tk
 from typing import Callable
+import types
 
 from core.plitk import load_tileset, PliTk
 
@@ -29,24 +30,29 @@ EMPTY = "empty"
 
 
 class Board:
-    def __init__(self, game, canvas, label, onResize):
+    def __init__(self, game, canvas, label, scripts, onResize):
         self.game = game
         self.canvas = canvas
         self.label = label
         self.tileset = load_tileset(game["tileset"])
         self.screen = PliTk(canvas, 0, 0, 0, 0, self.tileset, 1)
+
+        self.scripts = scripts
+        self.onResize = onResize
+
         self.load_players()
         self.level_index = 0
         self.load_level()
 
-        self.onResize = onResize
-
     def load_players(self):
         self.players = []
-        for i, name in enumerate(self.game["players"]):
-            script = import_module(name).script
+        for i, code in enumerate(self.scripts):
+            module = types.ModuleType(f'script{i}')
+            exec(code, module.__dict__)
+            script = module.script
+
             tile = self.game["tiles"]["@"][i]
-            self.players.append(Player(name, script, self, tile))
+            self.players.append(Player(str(i), script, self, tile))
         shuffle(self.players)
 
     def load_level(self):
@@ -174,7 +180,7 @@ class Player:
             self.board.take_gold(self.x, self.y)
 
 
-def start_game(root, onResize: Callable):
+def start_game(root, scripts, onResize: Callable):
     def update():
         t = time.time()
         if board.play():
@@ -192,7 +198,6 @@ def start_game(root, onResize: Callable):
     filename = "core/game.json"
     game = json.loads(Path(filename).read_text())
 
-    board = Board(game, canvas, label, onResize)
+    board = Board(game, canvas, label, scripts, onResize)
 
     root.after(0, update)
-    root.mainloop()

@@ -1,7 +1,7 @@
 from tkinter import Frame, Label, Entry, Text, Button, Tk
 from enum import Enum
 from tkinter import messagebox as msg
-from typing import List
+from typing import List, Callable
 
 import sync as sc
 import core.main as cr
@@ -31,6 +31,11 @@ def init(_frame: Frame, _root: Tk):
 
     nameEn = Entry(frame)
     scriptBx = Text(frame)
+    scriptBx.insert('1.0', '''
+def script(check, x, y):
+    pass
+
+    ''')
 
     mainLb.pack()
     loginBt.pack()
@@ -72,15 +77,10 @@ def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
 
     def script(): return scriptBx.get('1.0', 'end')
 
-    soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame([script()]))
+    soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame([], script))
     soloBt.pack()
 
-    def startMulti():
-
-        startGame([script()])
-
-    # noinspection PyTypeChecker
-    sc.waitForPlayers(startMulti(), lambda: onWait(subtxLb)) # callable -> None
+    sc.waitForPlayers(lambda a: startGame(a, script), lambda: onWait(subtxLb))
 
 
 dx = 0
@@ -100,8 +100,9 @@ def onWait(subtxLb: Label):
     dx = 0 if dx == 3 else dx + 1
 
 
-def startGame(scripts: List[str]):
+def startGame(scripts: List[str], scriptGetter: Callable):
     solo = len(scripts) == 0
-    clearFrame()
+    scripts.insert(0, scriptGetter())
 
-    # cr.start_game(frame, lambda w, h: root.geometry(f'{w}x{h}'))
+    clearFrame()
+    cr.start_game(frame, scripts, lambda w, h: root.geometry(f'{w}x{h}'))

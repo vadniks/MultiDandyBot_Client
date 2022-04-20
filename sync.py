@@ -37,15 +37,15 @@ def _checkForPlayers() -> List[str] | None:
         return None
     else:
         a = json.loads(rsp.text)
-        print(a, len(a))
-        return False
+        # print(a, len(a), type(a))
+        return a
 
 
 def waitForPlayers(onFinish: Callable, onWait: Callable = None):
     def wfp():
         while True:
-            if _checkForPlayers():
-                onFinish()
+            if len((scripts := _checkForPlayers())) > 0:
+                onFinish(scripts)
                 break
             if onWait is not None:
                 onWait()
