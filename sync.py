@@ -7,12 +7,14 @@ import threading as th
 
 sid: int
 pid: int
+name: str
 HOST = 'http://127.0.0.1:5000'
 THRESHOLD = 0.5 # seconds
 
 
-def newSession(name: str, script: str) -> bool:
-    global sid, pid
+def newSession(_name: str, script: str) -> bool:
+    global sid, pid, name
+    name = _name
 
     try:
         rsp: rq.Response = rq.post(f'{HOST}/new',
@@ -37,15 +39,14 @@ def _checkForPlayers() -> List[str] | None:
         return None
     else:
         a = json.loads(rsp.text)
-        # print(a, len(a), type(a))
         return a
 
 
 def waitForPlayers(onFinish: Callable, onWait: Callable = None):
     def wfp():
         while True:
-            if len((scripts := _checkForPlayers())) > 0:
-                onFinish(scripts)
+            if (players := _checkForPlayers()) is not None and len(players) > 0:
+                onFinish(players)
                 break
             if onWait is not None:
                 onWait()

@@ -6,7 +6,6 @@ https://github.com/true-grue/DandyBot
 
 import time
 import json
-from importlib import import_module
 from pathlib import Path
 from random import shuffle
 import tkinter as tk
@@ -30,14 +29,14 @@ EMPTY = "empty"
 
 
 class Board:
-    def __init__(self, game, canvas, label, scripts, onResize):
+    def __init__(self, game, canvas, label, fetchedPlayers, onResize):
         self.game = game
         self.canvas = canvas
         self.label = label
         self.tileset = load_tileset(game["tileset"])
         self.screen = PliTk(canvas, 0, 0, 0, 0, self.tileset, 1)
 
-        self.scripts = scripts
+        self.fetchedPlayers = fetchedPlayers
         self.onResize = onResize
 
         self.load_players()
@@ -46,9 +45,10 @@ class Board:
 
     def load_players(self):
         self.players = []
-        for i, code in enumerate(self.scripts):
+        for i, fplayer in enumerate(self.fetchedPlayers):
             module = types.ModuleType(f'script{i}')
-            exec(code, module.__dict__)
+            exec(fplayer[2], module.__dict__)
+            # noinspection PyUnresolvedReferences
             script = module.script
 
             tile = self.game["tiles"]["@"][i]
@@ -180,7 +180,7 @@ class Player:
             self.board.take_gold(self.x, self.y)
 
 
-def start_game(root, scripts, onResize: Callable):
+def start_game(root, players, onResize: Callable):
     def update():
         t = time.time()
         if board.play():
@@ -198,6 +198,6 @@ def start_game(root, scripts, onResize: Callable):
     filename = "core/game.json"
     game = json.loads(Path(filename).read_text())
 
-    board = Board(game, canvas, label, scripts, onResize)
+    board = Board(game, canvas, label, players, onResize)
 
     root.after(0, update)

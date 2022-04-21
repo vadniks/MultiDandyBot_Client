@@ -1,7 +1,7 @@
 from tkinter import Frame, Label, Entry, Text, Button, Tk
 from enum import Enum
 from tkinter import messagebox as msg
-from typing import List, Callable
+from typing import List, Callable, Tuple
 
 import sync as sc
 import core.main as cr
@@ -45,6 +45,7 @@ def script(check, x, y):
 
 def onLoginBt(nameEn: Entry, scriptBx: Text, loginBt: Button):
     name = nameEn.get()
+    root.title('Client : ' + name)
     script = scriptBx.get('1.0', 'end-1c')
 
     if len(name) == 0 or len(script) == 0:
@@ -80,7 +81,7 @@ def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
     soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame([], script))
     soloBt.pack()
 
-    sc.waitForPlayers(lambda a: startGame(a, script), lambda: onWait(subtxLb))
+    sc.waitForPlayers(lambda players: startGame(players, script), lambda: onWait(subtxLb))
 
 
 dx = 0
@@ -100,9 +101,9 @@ def onWait(subtxLb: Label):
     dx = 0 if dx == 3 else dx + 1
 
 
-def startGame(scripts: List[str], scriptGetter: Callable):
-    solo = len(scripts) == 0
-    scripts.insert(0, scriptGetter())
+def startGame(players: List[Tuple[int, str, str]], scriptGetter: Callable):
+    solo = len(players) == 0
+    players.insert(0, (sc.pid, sc.name, scriptGetter()))
 
     clearFrame()
-    cr.start_game(frame, scripts, lambda w, h: root.geometry(f'{w}x{h}'))
+    cr.start_game(frame, players, lambda w, h: root.geometry(f'{w}x{h}'))
