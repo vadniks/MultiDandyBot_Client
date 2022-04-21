@@ -4,7 +4,7 @@ from tkinter import messagebox as msg
 from typing import List, Callable, Tuple
 
 import sync as sc
-import core.gmain as cr
+import core.game as cr
 from main import SCRIPT_STUB
 
 

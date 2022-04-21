@@ -53,8 +53,6 @@ class Board:
 
             tile = self.game["tiles"]["@"][0 if i == 0 else 1]
             self.players.append(Player(fplayer[1], script, self, tile, fplayer[0]))
-
-        sc.tracePlayers(self.onPlayersTrace)
         shuffle(self.players)
 
     @staticmethod
@@ -69,16 +67,6 @@ class Board:
             if i.id == _id:
                 return i
         return None
-
-    #                                           id   lvl   x    y   gold
-    def onPlayersTrace(S, positions: List[Tuple[int, int, int, int, int]]):
-        for p in positions:
-            player = S.getPlayer(p[0])
-            S.remove_player(player)
-
-            if p[1] == S.level_index:
-                player.gold = p[4]
-                S.add_player(player, p[2], p[3])
 
     def load_level(self):
         self.gold = 0
@@ -144,11 +132,27 @@ class Board:
         if cmd == "player":
             return item != "#" and self.has_player[x][y]
 
+    #                                               id   lvl   x    y   gold
+    def updateOtherPlayers(S, positions: List[Tuple[int, int, int, int, int]]):
+        for p in positions:
+            player = S.getPlayer(p[0])
+            S.remove_player(player)
+
+            if p[1] == S.level_index:
+                player.gold = p[4]
+                S.add_player(player, p[2], p[3])
+
     def play(self):
-        for p in self.players:
-            p.act(p.script(self.check, p.x, p.y))
-            if self.gold >= self.level["gold"]:
-                return self.select_next_level()
+        master = self.getPlayer(sc.pid)
+        master.act(master.script(self.check, master.x, master.y))
+
+        if self.gold >= self.level["gold"]:
+            return self.select_next_level()
+
+        traced = sc.tracePlayers()
+        assert traced is not None
+        self.updateOtherPlayers(traced)
+
         self.steps += 1
         return self.steps < self.level["steps"]
 
