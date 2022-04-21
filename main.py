@@ -5,7 +5,7 @@ import sync as sc
 
 WIDTH = 1000
 HEIGHT = 600
-
+SCRIPT_STUB = 'def script(check, x, y): pass'
 
 # noinspection PyMethodParameters
 class App(Frame):

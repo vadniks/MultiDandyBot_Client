@@ -4,7 +4,8 @@ from tkinter import messagebox as msg
 from typing import List, Callable, Tuple
 
 import sync as sc
-import core.main as cr
+import core.gmain as cr
+from main import SCRIPT_STUB
 
 
 class State(Enum):
@@ -31,11 +32,7 @@ def init(_frame: Frame, _root: Tk):
 
     nameEn = Entry(frame)
     scriptBx = Text(frame)
-    scriptBx.insert('1.0', '''
-def script(check, x, y):
-    pass
-
-    ''')
+    scriptBx.insert('1.0', SCRIPT_STUB)
 
     mainLb.pack()
     loginBt.pack()
@@ -101,9 +98,9 @@ def onWait(subtxLb: Label):
     dx = 0 if dx == 3 else dx + 1
 
 
-def startGame(players: List[Tuple[int, str, str]], scriptGetter: Callable):
+def startGame(players: List[Tuple[int, str]], scriptGetter: Callable):
     solo = len(players) == 0
-    players.insert(0, (sc.pid, sc.name, scriptGetter()))
+    players.insert(0, (sc.pid, sc.name))
 
     clearFrame()
-    cr.start_game(frame, players, lambda w, h: root.geometry(f'{w}x{h}'))
+    cr.start_game(frame, players, lambda w, h: root.geometry(f'{w}x{h}'), scriptGetter())

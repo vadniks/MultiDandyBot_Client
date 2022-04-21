@@ -1,7 +1,7 @@
 ﻿"""
 MIT License
 Copyright (c) 2021 Peter Sovietov
-https://github.com/true-grue/DandyBot
+Forked from https://github.com/true-grue/DandyBot
 """
 
 import json
