@@ -64,14 +64,22 @@ def quitt():
 
 
 def tracePlayers(onUpdate: Callable):
-    #                           id   lvl   x    y
-    def request() -> List[Tuple[int, int, int, int]] | None:
+    #                           id  level  x    y   gold
+    def request() -> List[Tuple[int, int, int, int, int]] | None:
         try:
-            rsp: rq.Response = rq.post(f'{HOST}/trc/{pid}/{sid}')
+            rsp: rq.Response = rq.get(f'{HOST}/trc/{pid}')
         except Exception:
             return None
 
-        return json.loads(rsp.text) if rsp.status_code == 200 else None
+        if rsp.status_code == 200:
+            jsn = json.loads(rsp.text)
+            _list = []
+            for i in jsn:
+                _list.append((int(i['id']), int(i['level']),
+                              int(i['x']), int(i['y']), int(i['gold'])))
+            return _list
+        else:
+            return None
 
     def trace():
         while True:
@@ -83,3 +91,11 @@ def tracePlayers(onUpdate: Callable):
     thread = Thread(target=trace)
     thread.daemon = True
     thread.start()
+
+
+def updatePlayer(lvl: int, x: int, y: int, goldAmount: int):
+    try:
+        rq.post(f'{HOST}/upd/{pid}',
+            json={'level': lvl, 'x': x, 'y': y, 'gold': goldAmount})
+    except Exception: pass
+

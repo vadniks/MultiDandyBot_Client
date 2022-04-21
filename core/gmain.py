@@ -70,13 +70,14 @@ class Board:
                 return i
         return None
 
-    #                                           id   lvl   x    y
-    def onPlayersTrace(S, positions: List[Tuple[int, int, int, int]]):
+    #                                           id   lvl   x    y   gold
+    def onPlayersTrace(S, positions: List[Tuple[int, int, int, int, int]]):
         for p in positions:
             player = S.getPlayer(p[0])
             S.remove_player(player)
 
             if p[1] == S.level_index:
+                player.gold = p[4]
                 S.add_player(player, p[2], p[3])
 
     def load_level(self):
