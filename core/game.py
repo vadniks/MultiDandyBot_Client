@@ -149,6 +149,8 @@ class Board:
         if self.gold >= self.level["gold"]:
             return self.select_next_level()
 
+        sc.updatePlayer(self.level_index, master.x, master.y, master.gold)
+
         traced = sc.tracePlayers()
         assert traced is not None
         self.updateOtherPlayers(traced)
