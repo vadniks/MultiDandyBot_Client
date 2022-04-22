@@ -49,10 +49,8 @@ def onLoginBt(nameEn: Entry, scriptBx: Text, loginBt: Button):
         msg.showerror('Error', 'Text fields are empty')
         return
 
-    if not sc.newSession(name, script):
-        msg.showerror('Error', 'Unable to retrieve session')
-    else:
-        lobby(nameEn, scriptBx, loginBt)
+    sc.connect(name, script)
+    lobby(nameEn, scriptBx, loginBt)
 
 
 subtxLb: Label

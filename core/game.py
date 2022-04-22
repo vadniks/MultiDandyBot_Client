@@ -4,16 +4,20 @@ Copyright (c) 2021 Peter Sovietov
 Forked from https://github.com/true-grue/DandyBot
 """
 
-import time
 import json
+from abc import ABC, abstractmethod
 from pathlib import Path
 from random import shuffle
 import tkinter as tk
 from typing import Callable, List, Tuple, Any
 import types
+
+from overrides import overrides
+
 import sync as sc
 from main import SCRIPT_STUB
 from core.plitk import load_tileset, PliTk
+from tkinter import Tk
 
 
 DELAY = 200 # 50
@@ -29,9 +33,23 @@ GOLD = "gold"
 WALL = "wall"
 EMPTY = "empty"
 
+KEYS = ('w', 'a', 's', 'd', '<space>')
 
-class Board:
+
+class IBoard(ABC):
+    @abstractmethod
+    def getMasterPlayer(S) -> Any: pass
+
+
+_iboard: IBoard
+
+
+class Board(IBoard):
+
     def __init__(self, game, canvas, label, fetchedPlayers, onResize, script):
+        global _iboard
+        _iboard = self
+
         self.game = game
         self.canvas = canvas
         self.label = label
@@ -45,6 +63,10 @@ class Board:
         self.load_players()
         self.level_index = 0
         self.load_level()
+
+    @overrides
+    def getMasterPlayer(S) -> Any:
+        return S.getPlayer(sc.pid)
 
     def load_players(self):
         self.players = []
@@ -151,9 +173,8 @@ class Board:
 
         sc.updatePlayer(self.level_index, master.x, master.y, master.gold)
 
-        traced = sc.tracePlayers()
-        assert traced is not None
-        self.updateOtherPlayers(traced)
+        if (traced := sc.tracePlayers()) is not None:
+            self.updateOtherPlayers(traced)
 
         self.steps += 1
 
@@ -226,5 +247,26 @@ def start_game(root, players, onResize: Callable, script):
     game = json.loads(Path(filename).read_text())
 
     board = Board(game, canvas, label, players, onResize, script)
-
     root.after(0, update)
+
+
+class _BoardStub(IBoard):
+    @overrides
+    def getMasterPlayer(S) -> Any: raise Exception()
+
+
+_iboard = _BoardStub()
+
+
+def bindKeys(root: Tk):
+    root.bind(KEYS[0], lambda event: _onKeyPressed(UP)) # w
+    root.bind(KEYS[1], lambda event: _onKeyPressed(LEFT)) # a
+    root.bind(KEYS[2], lambda event: _onKeyPressed(DOWN)) # s
+    root.bind(KEYS[3], lambda event: _onKeyPressed(RIGHT)) # d
+    root.bind(KEYS[4], lambda event: _onKeyPressed(TAKE)) # <space>
+
+
+def _onKeyPressed(key: str):
+    if not isinstance(_iboard, Board): return
+    print('onKeyPressed', key)
+    _iboard.getMasterPlayer().act(key)

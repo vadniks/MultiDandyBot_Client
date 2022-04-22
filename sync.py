@@ -5,14 +5,14 @@ from time import sleep
 from threading import Thread
 
 
-sid: int
-pid: int
+sid = -1
+pid = 0
 name: str
 HOST = 'http://127.0.0.1:5000'
 THRESHOLD = 0.5 # seconds
 
 
-def newSession(_name: str, script: str) -> bool:
+def connect(_name: str, script: str) -> bool:
     global sid, pid, name
     name = _name
 
@@ -21,13 +21,10 @@ def newSession(_name: str, script: str) -> bool:
                                    json={'name': name, 'script': script, 'level': 0})
     except Exception: return True
 
-    if rsp.status_code != 200:
-        return False
-    else:
+    if rsp.status_code == 200:
         sid = int(json.loads(rsp.text)['sid'])
         pid = int(json.loads(rsp.text)['pid'])
         print(sid, pid)
-        return True
 
 
 def _checkForPlayers() -> List[str] | None:
