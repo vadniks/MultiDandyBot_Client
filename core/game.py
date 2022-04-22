@@ -16,7 +16,7 @@ from main import SCRIPT_STUB
 from core.plitk import load_tileset, PliTk
 
 
-DELAY = 50
+DELAY = 200 # 50
 
 UP = "up"
 DOWN = "down"
@@ -134,7 +134,10 @@ class Board:
 
     #                                               id   lvl   x    y   gold
     def updateOtherPlayers(S, positions: List[Tuple[int, int, int, int, int]]):
+        print(sc.pid, len(positions), 'gtbhntfghb')
         for p in positions:
+            print(p[0], p[1], p[2], p[3], p[4])
+
             player = S.getPlayer(p[0])
             S.remove_player(player)
 
@@ -143,6 +146,8 @@ class Board:
                 S.add_player(player, p[2], p[3])
 
     def play(self):
+        print(sc.pid, 'dfhgkl')
+
         master = self.getPlayer(sc.pid)
         master.act(master.script(self.check, master.x, master.y))
 
@@ -156,7 +161,6 @@ class Board:
         self.updateOtherPlayers(traced)
 
         self.steps += 1
-        return self.steps < self.level["steps"]
 
     def update_score(self):
         lines = [("Level:%4d\n" % (self.level_index + 1))]
@@ -214,12 +218,8 @@ class Player:
 
 def start_game(root, players, onResize: Callable, script):
     def update():
-        t = time.time()
-        if board.play():
-            dt = int((time.time() - t) * 1000)
-            root.after(max(DELAY - dt, 0), update)
-        else:
-            label["text"] += "\n\nGAME OVER!"
+        board.play()
+        root.after(DELAY, update)
 
     root.configure(background="black")
     canvas = tk.Canvas(root, bg="black", highlightthickness=0)

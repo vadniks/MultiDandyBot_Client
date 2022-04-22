@@ -9,7 +9,7 @@ sid: int
 pid: int
 name: str
 HOST = 'http://127.0.0.1:5000'
-THRESHOLD = 0.1 # seconds
+THRESHOLD = 0.5 # seconds
 
 
 def newSession(_name: str, script: str) -> bool:
@@ -65,16 +65,17 @@ def quitt():
 
 #                                id  level  x    y   gold
 def tracePlayers() -> List[Tuple[int, int, int, int, int]] | None:
-    try: rsp: rq.Response = rq.get(f'{HOST}/trc/{pid}')
+    try: rsp: rq.Response = rq.get(f'{HOST}/trc/{sid}/{pid}')
     except Exception: return None
 
     if rsp.status_code != 200: return None
 
     jsn = json.loads(rsp.text)
+    print(pid, type(jsn), jsn, rsp.text)
     _list = []
     for i in jsn:
-        _list.append((int(i['id']), int(i['level']),
-                      int(i['x']), int(i['y']), int(i['gold'])))
+        _list.append((int(i[0]), int(i[1]), int(i[2]),
+                      int(i[3]), int(i[4])))
     return _list
 
 

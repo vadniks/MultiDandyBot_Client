@@ -3,8 +3,8 @@ import launcher as lc
 import sync as sc
 
 
-WIDTH = 1000
-HEIGHT = 600
+WIDTH = 600
+HEIGHT = 300
 SCRIPT_STUB = 'def script(check, x, y): pass'
 
 # noinspection PyMethodParameters
