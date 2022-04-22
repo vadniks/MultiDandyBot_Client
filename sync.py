@@ -71,7 +71,6 @@ def tracePlayers() -> List[Tuple[int, int, int, int, int]] | None:
     if rsp.status_code != 200: return None
 
     jsn = json.loads(rsp.text)
-    print(pid, type(jsn), jsn, rsp.text)
     _list = []
     for i in jsn:
         _list.append((int(i[0]), int(i[1]), int(i[2]),

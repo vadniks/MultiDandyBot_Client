@@ -134,10 +134,7 @@ class Board:
 
     #                                               id   lvl   x    y   gold
     def updateOtherPlayers(S, positions: List[Tuple[int, int, int, int, int]]):
-        print(sc.pid, len(positions), 'gtbhntfghb')
         for p in positions:
-            print(p[0], p[1], p[2], p[3], p[4])
-
             player = S.getPlayer(p[0])
             S.remove_player(player)
 
@@ -146,8 +143,6 @@ class Board:
                 S.add_player(player, p[2], p[3])
 
     def play(self):
-        print(sc.pid, 'dfhgkl')
-
         master = self.getPlayer(sc.pid)
         master.act(master.script(self.check, master.x, master.y))
 
