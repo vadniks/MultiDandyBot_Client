@@ -268,5 +268,4 @@ def bindKeys(root: Tk):
 
 def _onKeyPressed(key: str):
     if not isinstance(_iboard, Board): return
-    print('onKeyPressed', key)
     _iboard.getMasterPlayer().act(key)
