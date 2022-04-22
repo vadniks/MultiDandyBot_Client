@@ -33,18 +33,18 @@ GOLD = "gold"
 WALL = "wall"
 EMPTY = "empty"
 
-KEYS = ('w', 'a', 's', 'd', '<space>')
+_KEYS = ('w', 'a', 's', 'd', '<space>')
 
 
-class IBoard(ABC):
+class _IBoard(ABC):
     @abstractmethod
     def getMasterPlayer(S) -> Any: pass
 
 
-_iboard: IBoard
+_iboard: _IBoard
 
 
-class Board(IBoard):
+class Board(_IBoard):
 
     def __init__(self, game, canvas, label, fetchedPlayers, onResize, script):
         global _iboard
@@ -250,7 +250,7 @@ def start_game(root, players, onResize: Callable, script):
     root.after(0, update)
 
 
-class _BoardStub(IBoard):
+class _BoardStub(_IBoard):
     @overrides
     def getMasterPlayer(S) -> Any: raise Exception()
 
@@ -259,11 +259,11 @@ _iboard = _BoardStub()
 
 
 def bindKeys(root: Tk):
-    root.bind(KEYS[0], lambda event: _onKeyPressed(UP))    # w
-    root.bind(KEYS[1], lambda event: _onKeyPressed(LEFT))  # a
-    root.bind(KEYS[2], lambda event: _onKeyPressed(DOWN))  # s
-    root.bind(KEYS[3], lambda event: _onKeyPressed(RIGHT)) # d
-    root.bind(KEYS[4], lambda event: _onKeyPressed(TAKE))  # <space>
+    root.bind(_KEYS[0], lambda event: _onKeyPressed(UP))    # w
+    root.bind(_KEYS[1], lambda event: _onKeyPressed(LEFT))  # a
+    root.bind(_KEYS[2], lambda event: _onKeyPressed(DOWN))  # s
+    root.bind(_KEYS[3], lambda event: _onKeyPressed(RIGHT)) # d
+    root.bind(_KEYS[4], lambda event: _onKeyPressed(TAKE))  # <space>
 
 
 def _onKeyPressed(key: str):
