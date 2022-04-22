@@ -259,11 +259,11 @@ _iboard = _BoardStub()
 
 
 def bindKeys(root: Tk):
-    root.bind(KEYS[0], lambda event: _onKeyPressed(UP)) # w
-    root.bind(KEYS[1], lambda event: _onKeyPressed(LEFT)) # a
-    root.bind(KEYS[2], lambda event: _onKeyPressed(DOWN)) # s
+    root.bind(KEYS[0], lambda event: _onKeyPressed(UP))    # w
+    root.bind(KEYS[1], lambda event: _onKeyPressed(LEFT))  # a
+    root.bind(KEYS[2], lambda event: _onKeyPressed(DOWN))  # s
     root.bind(KEYS[3], lambda event: _onKeyPressed(RIGHT)) # d
-    root.bind(KEYS[4], lambda event: _onKeyPressed(TAKE)) # <space>
+    root.bind(KEYS[4], lambda event: _onKeyPressed(TAKE))  # <space>
 
 
 def _onKeyPressed(key: str):
