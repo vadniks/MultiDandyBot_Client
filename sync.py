@@ -81,3 +81,6 @@ def updatePlayer(lvl: int, x: int, y: int, goldAmount: int):
             json={'level': lvl, 'x': x, 'y': y, 'gold': goldAmount})
     except Exception: pass
 
+
+def updateBoard():
+    pass #TODO update gold, level on the board
