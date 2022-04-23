@@ -18,6 +18,7 @@ import sync as sc
 from main import SCRIPT_STUB
 from core.plitk import load_tileset, PliTk
 from tkinter import Tk
+from tkinter import messagebox as msg
 
 
 DELAY = 50
@@ -46,7 +47,7 @@ _iboard: _IBoard
 
 class Board(_IBoard):
 
-    def __init__(self, game, canvas, label, fetchedPlayers, onResize, script):
+    def __init__(self, game, canvas, label, fetchedPlayers, onResize, script, root):
         global _iboard
         _iboard = self
 
@@ -59,6 +60,7 @@ class Board(_IBoard):
         self.fetchedPlayers = fetchedPlayers
         self.onResize = onResize
         self.masterScript = script
+        self.root = root
 
         self.load_players()
         self.level_index = 0
@@ -155,15 +157,57 @@ class Board(_IBoard):
         if cmd == "player":
             return item != "#" and self.has_player[x][y]
 
+    '''def checkForConnectedPlayers(S) -> List[Tuple[int, str]]:
+        fetchedOnes = sc.checkForPlayers()
+        if len(fetchedOnes) <= len(S.players): return fetchedOnes
+
+        for new in fetchedOnes:
+            isAlreadyAdded = False
+
+            for old in S.players:
+                if new[0] == old.id:
+                    isAlreadyAdded = True
+                    break
+
+            if not isAlreadyAdded:
+                print(sc.name, 'adds', new[1])
+                script = S.initModule(SCRIPT_STUB)
+                tile = S.game["tiles"]["@"][1]
+                S.players.append(Player(new[1], script, S, tile, new[0]))
+        return fetchedOnes'''
+
+    '''def checkForDisconnectedPlayers(S, fetchedOnes: List[Tuple[int, str]]):
+        if len(fetchedOnes) + 1 >= len(S.players): return
+        for old in S.players:
+            if old.id == sc.pid: continue
+            isNotPresent = True
+
+            for new in fetchedOnes:
+                if new[0] == old.id:
+                    isNotPresent = False
+                    break
+
+            if isNotPresent:
+                print(sc.name, 'rems', old.name, list(map(lambda a: a.name, fetchedOnes)))
+                S.remove_player(old)
+                S.players.remove(old)'''
+
     #                                               id   lvl   x    y   gold
     def updateOtherPlayers(S, positions: List[Tuple[int, int, int, int, int]]):
+        # if len(positions) != len(S.players):
+        #     S.root.withdraw()
+        #     msg.showerror('Players changed, restart required', parent=S.root)
+
+        '''fs = S.checkForConnectedPlayers()
+        S.checkForDisconnectedPlayers(fs)'''
+
         for p in positions:
             player = S.getPlayer(p[0])
             S.remove_player(player)
 
-            if p[1] == S.level_index:
-                player.gold = p[4]
-                S.add_player(player, p[2], p[3])
+            if p[2] == S.level_index:
+                player.gold = p[5]
+                S.add_player(player, p[3], p[4])
 
     #                                            pid   x    y
     def updateCurrentBoard(S, takens: List[Tuple[int, int, int]]):
@@ -242,22 +286,22 @@ class Player:
             self.board.take_gold(self.x, self.y, True)
 
 
-def start_game(root, players, onResize: Callable, script):
+def start_game(frame, players, onResize: Callable, script, root):
     def update():
         board.play()
-        root.after(DELAY, update)
+        frame.after(DELAY, update)
 
-    root.configure(background="black")
-    canvas = tk.Canvas(root, bg="black", highlightthickness=0)
+    frame.configure(background="black")
+    canvas = tk.Canvas(frame, bg="black", highlightthickness=0)
     canvas.pack(side=tk.LEFT)
-    label = tk.Label(root, font=("TkFixedFont",),
+    label = tk.Label(frame, font=("TkFixedFont",),
                      justify=tk.RIGHT, fg="white", bg="gray20")
     label.pack(side=tk.RIGHT, anchor="n")
     filename = "core/game.json"
     game = json.loads(Path(filename).read_text())
 
-    board = Board(game, canvas, label, players, onResize, script)
-    root.after(0, update)
+    board = Board(game, canvas, label, players, onResize, script, root)
+    frame.after(0, update)
 
 
 class _BoardStub(_IBoard):

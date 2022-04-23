@@ -31,7 +31,7 @@ def connect(_name: str, script: str) -> bool:
         print(sid, pid)
 
 
-def _checkForPlayers() -> List[str] | None:
+def checkForPlayers() -> List[Tuple[int, str]] | None:
     try:
         rsp: rq.Response = rq.get(f'{_HOST}/chk/{pid}')
     except Exception: return None
@@ -48,7 +48,7 @@ def waitForPlayers(onFinish: Callable, onWait: Callable = None):
 
     def wait():
         while _canWaitForServer:
-            if (players := _checkForPlayers()) \
+            if (players := checkForPlayers()) \
                     is not None and len(players) > 0:
                 onFinish(players)
                 break
@@ -72,8 +72,8 @@ def quitt():
     except Exception: pass
 
 
-#                                id  level  x    y   gold
-def tracePlayers() -> List[Tuple[int, int, int, int, int]] | None:
+#                                id  name level  x    y   gold
+def tracePlayers() -> List[Tuple[int, str, int, int, int, int]] | None:
     if solo: return None
     try: rsp: rq.Response = rq.get(f'{_HOST}/trc/{sid}/{pid}')
     except Exception: return None
@@ -83,8 +83,8 @@ def tracePlayers() -> List[Tuple[int, int, int, int, int]] | None:
     jsn = json.loads(rsp.text)
     _list = []
     for i in jsn:
-        _list.append((int(i[0]), int(i[1]), int(i[2]),
-                      int(i[3]), int(i[4])))
+        _list.append((int(i[0]), i[1], int(i[2]), int(i[3]),
+                      int(i[4]), int(i[5])))
     return _list
 
 

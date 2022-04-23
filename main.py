@@ -10,10 +10,10 @@ SCRIPT_STUB = 'def script(check, x, y): pass'
 # noinspection PyMethodParameters
 class App(Frame):
 
-    def __init__(S, master):
-        super(App, S).__init__(master)
+    def __init__(S, root):
+        super(App, S).__init__(root)
         S.pack()
-        lc.init(S, master)
+        lc.init(S, root)
 
 
 if __name__ == '__main__':

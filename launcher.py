@@ -104,4 +104,4 @@ def startGame(players: List[Tuple[int, str]], scriptGetter: Callable):
     players.insert(0, (sc.pid, sc.name))
 
     clearFrame()
-    cr.start_game(frame, players, lambda w, h: root.geometry(f'{w}x{h}'), scriptGetter())
+    cr.start_game(frame, players, lambda w, h: root.geometry(f'{w}x{h}'), scriptGetter(), root)
