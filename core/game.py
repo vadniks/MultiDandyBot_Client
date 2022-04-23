@@ -20,7 +20,7 @@ from core.plitk import load_tileset, PliTk
 from tkinter import Tk
 
 
-DELAY = 200 # 50
+DELAY = 50
 
 UP = "up"
 DOWN = "down"
@@ -74,13 +74,8 @@ class Board(_IBoard):
             script = self.initModule(self.masterScript if i == 0 else SCRIPT_STUB)
 
             tile = self.game["tiles"]["@"][0 if i == 0 else 1]
-            self.players.append(Player(fplayer[1], script, self, tile, fplayer[0], self.onGoldTake))
+            self.players.append(Player(fplayer[1], script, self, tile, fplayer[0]))
         shuffle(self.players)
-
-    #                                   x    y
-    def onGoldTake(S, takenFrom: Tuple[int, int]):
-
-        pass
 
     @staticmethod
     def initModule(code) -> str:
@@ -141,12 +136,12 @@ class Board(_IBoard):
         self.has_player[x][y] = player
         self.update(x, y)
 
-    def take_gold(self, x, y):
-        self.gold += self.check("gold", x, y)
+    def take_gold(self, x, y, isMaster: bool):
+        if isMaster: self.gold += self.check("gold", x, y)
         self.map[x][y] = " "
         self.update(x, y)
         self.update_score()
-        sc.updateBoard((x, y))
+        if isMaster: sc.updateBoard((x, y))
 
     def check(self, cmd, *args):
         if cmd == "level":
@@ -173,7 +168,7 @@ class Board(_IBoard):
     #                                            pid   x    y
     def updateCurrentBoard(S, takens: List[Tuple[int, int, int]]):
         for i in takens:
-            S.take_gold(i[0], i[1])
+            S.take_gold(i[1], i[2], False)
 
     def play(self):
         master = self.getPlayer(sc.pid)
@@ -209,7 +204,7 @@ class Board(_IBoard):
 
 
 class Player:
-    def __init__(self, name, script, board, tile, _id, onGoldTake):
+    def __init__(self, name, script, board, tile, _id):
         self.name = name
         self.script = script
         self.board = board
@@ -217,7 +212,6 @@ class Player:
         self.x, self.y = 0, 0
         self.gold = 0
         self.id = _id
-        self.onGoldTake = onGoldTake
 
     def act(self, cmd):
         dx, dy = 0, 0
@@ -245,8 +239,7 @@ class Player:
         gold = self.board.check("gold", self.x, self.y)
         if gold:
             self.gold += gold
-            self.board.take_gold(self.x, self.y)
-        self.onGoldTake((self.x, self.y))
+            self.board.take_gold(self.x, self.y, True)
 
 
 def start_game(root, players, onResize: Callable, script):
