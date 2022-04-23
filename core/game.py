@@ -157,50 +157,8 @@ class Board(_IBoard):
         if cmd == "player":
             return item != "#" and self.has_player[x][y]
 
-    '''def checkForConnectedPlayers(S) -> List[Tuple[int, str]]:
-        fetchedOnes = sc.checkForPlayers()
-        if len(fetchedOnes) <= len(S.players): return fetchedOnes
-
-        for new in fetchedOnes:
-            isAlreadyAdded = False
-
-            for old in S.players:
-                if new[0] == old.id:
-                    isAlreadyAdded = True
-                    break
-
-            if not isAlreadyAdded:
-                print(sc.name, 'adds', new[1])
-                script = S.initModule(SCRIPT_STUB)
-                tile = S.game["tiles"]["@"][1]
-                S.players.append(Player(new[1], script, S, tile, new[0]))
-        return fetchedOnes'''
-
-    '''def checkForDisconnectedPlayers(S, fetchedOnes: List[Tuple[int, str]]):
-        if len(fetchedOnes) + 1 >= len(S.players): return
-        for old in S.players:
-            if old.id == sc.pid: continue
-            isNotPresent = True
-
-            for new in fetchedOnes:
-                if new[0] == old.id:
-                    isNotPresent = False
-                    break
-
-            if isNotPresent:
-                print(sc.name, 'rems', old.name, list(map(lambda a: a.name, fetchedOnes)))
-                S.remove_player(old)
-                S.players.remove(old)'''
-
-    #                                               id   lvl   x    y   gold
-    def updateOtherPlayers(S, positions: List[Tuple[int, int, int, int, int]]):
-        # if len(positions) != len(S.players):
-        #     S.root.withdraw()
-        #     msg.showerror('Players changed, restart required', parent=S.root)
-
-        '''fs = S.checkForConnectedPlayers()
-        S.checkForDisconnectedPlayers(fs)'''
-
+    #                                               id   name lvl   x    y   gold
+    def updateOtherPlayers(S, positions: List[Tuple[int, str, int, int, int, int]]):
         for p in positions:
             player = S.getPlayer(p[0])
             S.remove_player(player)
