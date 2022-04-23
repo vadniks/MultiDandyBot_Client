@@ -8,6 +8,7 @@ from threading import Thread
 sid = -1
 pid = 0
 name: str
+level = 0
 HOST = 'http://127.0.0.1:5000'
 THRESHOLD = 0.5 # seconds
 
@@ -18,7 +19,7 @@ def connect(_name: str, script: str) -> bool:
 
     try:
         rsp: rq.Response = rq.post(f'{HOST}/new',
-                                   json={'name': name, 'script': script, 'level': 0})
+                                   json={'name': name, 'script': script, 'level': level})
     except Exception: return True
 
     if rsp.status_code == 200:
@@ -82,5 +83,22 @@ def updatePlayer(lvl: int, x: int, y: int, goldAmount: int):
     except Exception: pass
 
 
-def updateBoard():
-    pass #TODO update gold, level on the board
+#                                     x    y
+def updateBoard(goldTakenFrom: Tuple[int, int]):
+    try: rq.post(f'{HOST}/brd/{sid}/{level}',
+             json={'pid': pid, 'gtf_x': goldTakenFrom[0], 'gtf_y': goldTakenFrom[1]})
+    except Exception: pass
+
+
+#                              pid   x    y
+def traceBoard() -> List[Tuple[int, int, int]] | None:
+    try: rsp: rq.Response = rq.get(f'{HOST}/trc_b/{sid}/{level}')
+    except Exception: return None
+
+    if rsp.status_code != 200: return None
+
+    jsn = json.loads(rsp.text)
+    _list = []
+    for i in jsn:
+        _list.append((int(i[0]), int(i[1]), int(i[2])))
+    return _list

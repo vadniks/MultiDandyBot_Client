@@ -74,8 +74,13 @@ class Board(_IBoard):
             script = self.initModule(self.masterScript if i == 0 else SCRIPT_STUB)
 
             tile = self.game["tiles"]["@"][0 if i == 0 else 1]
-            self.players.append(Player(fplayer[1], script, self, tile, fplayer[0]))
+            self.players.append(Player(fplayer[1], script, self, tile, fplayer[0], self.onGoldTake))
         shuffle(self.players)
+
+    #                                   x    y
+    def onGoldTake(S, takenFrom: Tuple[int, int]):
+
+        pass
 
     @staticmethod
     def initModule(code) -> str:
@@ -141,6 +146,7 @@ class Board(_IBoard):
         self.map[x][y] = " "
         self.update(x, y)
         self.update_score()
+        sc.updateBoard((x, y))
 
     def check(self, cmd, *args):
         if cmd == "level":
@@ -164,17 +170,26 @@ class Board(_IBoard):
                 player.gold = p[4]
                 S.add_player(player, p[2], p[3])
 
+    #                                            pid   x    y
+    def updateCurrentBoard(S, takens: List[Tuple[int, int, int]]):
+        for i in takens:
+            S.take_gold(i[0], i[1])
+
     def play(self):
         master = self.getPlayer(sc.pid)
         master.act(master.script(self.check, master.x, master.y))
 
         if self.gold >= self.level["gold"]:
+            sc.level += 1
             return self.select_next_level()
 
         sc.updatePlayer(self.level_index, master.x, master.y, master.gold)
 
         if (traced := sc.tracePlayers()) is not None:
             self.updateOtherPlayers(traced)
+
+        if (takens := sc.traceBoard()) is not None:
+            self.updateCurrentBoard(takens)
 
         self.steps += 1
 
@@ -194,14 +209,15 @@ class Board(_IBoard):
 
 
 class Player:
-    def __init__(self, name, script, board, tile, id):
+    def __init__(self, name, script, board, tile, _id, onGoldTake):
         self.name = name
         self.script = script
         self.board = board
         self.tile = tile
         self.x, self.y = 0, 0
         self.gold = 0
-        self.id = id
+        self.id = _id
+        self.onGoldTake = onGoldTake
 
     def act(self, cmd):
         dx, dy = 0, 0
@@ -230,6 +246,7 @@ class Player:
         if gold:
             self.gold += gold
             self.board.take_gold(self.x, self.y)
+        self.onGoldTake((self.x, self.y))
 
 
 def start_game(root, players, onResize: Callable, script):
