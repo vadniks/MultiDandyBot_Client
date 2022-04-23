@@ -22,13 +22,16 @@ def connect(_name: str, script: str) -> bool:
 
     try:
         rsp: rq.Response = rq.post(f'{_HOST}/new',
-                                   json={'name': name, 'script': script, 'level': level})
-    except Exception: return True
+            json={'name': name, 'script': script, 'level': level})
+    except Exception: return False
 
     if rsp.status_code == 200:
-        sid = int(json.loads(rsp.text)['sid'])
+        if (sid := int(json.loads(rsp.text)['sid'])) == -1:
+            return False
+
         pid = int(json.loads(rsp.text)['pid'])
         print(sid, pid)
+        return True
 
 
 def checkForPlayers() -> List[Tuple[int, str]] | None:

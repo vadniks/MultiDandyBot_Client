@@ -49,8 +49,10 @@ def onLoginBt(nameEn: Entry, scriptBx: Text, loginBt: Button):
         msg.showerror('Error', 'Text fields are empty')
         return
 
-    sc.connect(name, script)
-    lobby(nameEn, scriptBx, loginBt)
+    if sc.connect(name, script):
+        lobby(nameEn, scriptBx, loginBt)
+    else:
+        msg.showerror(message='Connection failed or name already exists')
 
 
 subtxLb: Label
