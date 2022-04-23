@@ -6,6 +6,7 @@ from core import game
 WIDTH = 600
 HEIGHT = 300
 SCRIPT_STUB = 'def script(check, x, y): pass'
+IS_DEBUG_ENABLED = True
 
 # noinspection PyMethodParameters
 class App(Frame):

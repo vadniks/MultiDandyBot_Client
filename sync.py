@@ -117,3 +117,13 @@ def traceBoard() -> List[Tuple[int, int, int]] | None:
     for i in jsn:
         _list.append((int(i[0]), int(i[1]), int(i[2])))
     return _list
+
+
+def getCurrentGoldAmountOnBoard() -> int | None:
+    if solo: return None
+    try: rsp: rq.Response = rq.get(f'{_HOST}/gld/{sid}/{level}')
+    except Exception: return None
+
+    if rsp.status_code != 200: return None
+    print(rsp.text)
+    return int(rsp.text)

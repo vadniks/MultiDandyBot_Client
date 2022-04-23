@@ -15,7 +15,7 @@ import types
 from overrides import overrides
 
 import sync as sc
-from main import SCRIPT_STUB
+from main import SCRIPT_STUB, IS_DEBUG_ENABLED
 from core.plitk import load_tileset, PliTk
 from tkinter import Tk
 from tkinter import messagebox as msg
@@ -176,7 +176,8 @@ class Board(_IBoard):
         master = self.getPlayer(sc.pid)
         master.act(master.script(self.check, master.x, master.y))
 
-        if self.gold >= self.level["gold"]:
+        if (self.gold >= self.level["gold"] if sc.solo else
+                sc.getCurrentGoldAmountOnBoard() == 0):
             sc.level += 1
             return self.select_next_level()
 
@@ -279,5 +280,5 @@ def bindKeys(root: Tk):
 
 
 def _onKeyPressed(key: str):
-    if not isinstance(_iboard, Board): return
+    if not isinstance(_iboard, Board) or not IS_DEBUG_ENABLED: return
     _iboard.getMasterPlayer().act(key)
