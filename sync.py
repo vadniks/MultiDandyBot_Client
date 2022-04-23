@@ -125,5 +125,4 @@ def getCurrentGoldAmountOnBoard() -> int | None:
     except Exception: return None
 
     if rsp.status_code != 200: return None
-    print(rsp.text)
     return int(rsp.text)
