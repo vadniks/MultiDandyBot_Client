@@ -161,11 +161,9 @@ class Board(_IBoard):
     def updateOtherPlayers(S, positions: List[Tuple[int, str, int, int, int, int]]):
         for p in positions:
             player = S.getPlayer(p[0])
+            player.gold = p[5]
             S.remove_player(player)
-
-            if p[2] == S.level_index:
-                player.gold = p[5]
-                S.add_player(player, p[3], p[4])
+            S.add_player(player, p[3], p[4])
 
     #                                            pid   x    y
     def updateCurrentBoard(S, takens: List[Tuple[int, int, int]]):
@@ -176,12 +174,12 @@ class Board(_IBoard):
         master = self.getPlayer(sc.pid)
         master.act(master.script(self.check, master.x, master.y))
 
+        sc.updatePlayer(self.level_index, master.x, master.y, master.gold)
+
         if (self.gold >= self.level["gold"] if sc.solo else
                 sc.getCurrentGoldAmountOnBoard() == 0):
             sc.level += 1
             return self.select_next_level()
-
-        sc.updatePlayer(self.level_index, master.x, master.y, master.gold)
 
         if (traced := sc.tracePlayers()) is not None:
             self.updateOtherPlayers(traced)
@@ -202,6 +200,14 @@ class Board(_IBoard):
         self.level_index += 1
         if self.level_index < len(self.game["levels"]):
             self.load_level()
+
+            def a():
+                if (traced := sc.tracePlayers()) is not None:
+                    for i in traced:
+                        print(sc.name, i[1], i[5])
+                        self.getPlayer(i[0]).gold = i[5]
+                    self.update_score()
+            self.root.after(100, a)
             return True
         return False
 
@@ -217,6 +223,9 @@ class Player:
         self.id = _id
 
     def act(self, cmd):
+        # if IS_DEBUG_ENABLED:
+        #     print(self.x, self.y)
+
         dx, dy = 0, 0
         if cmd == UP:
             dy -= 1
