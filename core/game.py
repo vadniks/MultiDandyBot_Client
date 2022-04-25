@@ -11,28 +11,25 @@ from random import shuffle
 import tkinter as tk
 from typing import Callable, List, Tuple, Any
 import types
-
 from overrides import overrides
-
 import sync as sc
 from main import SCRIPT_STUB, IS_DEBUG_ENABLED
 from core.plitk import load_tileset, PliTk
 from tkinter import Tk
-from tkinter import messagebox as msg
 
 
-DELAY = 50
+_DELAY = 50
 
-UP = "up"
-DOWN = "down"
-LEFT = "left"
-RIGHT = "right"
-TAKE = "take"
-PASS = "pass"
-PLAYER = "player"
-GOLD = "gold"
-WALL = "wall"
-EMPTY = "empty"
+_UP = "up"
+_DOWN = "down"
+_LEFT = "left"
+_RIGHT = "right"
+_TAKE = "take"
+_PASS = "pass"
+_PLAYER = "player"
+_GOLD = "gold"
+_WALL = "wall"
+_EMPTY = "empty"
 
 _KEYS = ('w', 'a', 's', 'd', '<space>')
 
@@ -223,19 +220,16 @@ class Player:
         self.id = _id
 
     def act(self, cmd):
-        # if IS_DEBUG_ENABLED:
-        #     print(self.x, self.y)
-
         dx, dy = 0, 0
-        if cmd == UP:
+        if cmd == _UP:
             dy -= 1
-        elif cmd == DOWN:
+        elif cmd == _DOWN:
             dy += 1
-        elif cmd == LEFT:
+        elif cmd == _LEFT:
             dx -= 1
-        elif cmd == RIGHT:
+        elif cmd == _RIGHT:
             dx += 1
-        elif cmd == TAKE:
+        elif cmd == _TAKE:
             self.take()
         self.move(dx, dy)
 
@@ -257,7 +251,7 @@ class Player:
 def start_game(frame, players, onResize: Callable, script, root):
     def update():
         board.play()
-        frame.after(DELAY, update)
+        frame.after(_DELAY, update)
 
     frame.configure(background="black")
     canvas = tk.Canvas(frame, bg="black", highlightthickness=0)
@@ -281,11 +275,11 @@ _iboard = _BoardStub()
 
 
 def bindKeys(root: Tk):
-    root.bind(_KEYS[0], lambda event: _onKeyPressed(UP))    # w
-    root.bind(_KEYS[1], lambda event: _onKeyPressed(LEFT))  # a
-    root.bind(_KEYS[2], lambda event: _onKeyPressed(DOWN))  # s
-    root.bind(_KEYS[3], lambda event: _onKeyPressed(RIGHT)) # d
-    root.bind(_KEYS[4], lambda event: _onKeyPressed(TAKE))  # <space>
+    root.bind(_KEYS[0], lambda event: _onKeyPressed(_UP))    # w
+    root.bind(_KEYS[1], lambda event: _onKeyPressed(_LEFT))  # a
+    root.bind(_KEYS[2], lambda event: _onKeyPressed(_DOWN))  # s
+    root.bind(_KEYS[3], lambda event: _onKeyPressed(_RIGHT)) # d
+    root.bind(_KEYS[4], lambda event: _onKeyPressed(_TAKE))  # <space>
 
 
 def _onKeyPressed(key: str):
