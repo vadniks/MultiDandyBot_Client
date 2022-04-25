@@ -1,8 +1,7 @@
-from tkinter import Frame, Label, Entry, Text, Button, Tk
+from tkinter import Frame, Label, Entry, Text, Button, Tk, Listbox, END
 from enum import Enum
 from tkinter import messagebox as msg
 from typing import List, Callable, Tuple
-
 import sync as sc
 import core.game as cr
 from main import SCRIPT_STUB
@@ -16,6 +15,9 @@ class State(Enum):
 frame: Frame
 root: Tk
 mainLb: Label
+subtxLb: Label
+soloBt: Button
+playersLsb: Listbox
 
 state: State = State.LAUNCH
 
@@ -73,6 +75,9 @@ def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
     subtxLb = Label(frame, font=("TkDefaultFont", 10), text='Waiting for players...')
     subtxLb.pack()
 
+
+    loadLeaderBoard()
+
     def script(): return scriptBx.get('1.0', 'end')
 
     soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame([], script))
@@ -81,14 +86,25 @@ def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
     sc.waitForPlayers(lambda players: startGame(players, script), lambda: onWait(subtxLb))
 
 
+def loadLeaderBoard():
+    global playersLsb
+    playersLsb = Listbox(frame)
+
+    #                  name score date
+    players: List[Tuple[str, int, int]] = sc.getSavedPlayers()
+    [playersLsb.insert(END, i) for i in players]
+    playersLsb.pack()
+
+
 dx = 0
 
 
 def clearFrame():
-    global mainLb, subtxLb, soloBt
+    global mainLb, subtxLb, soloBt, playersLsb
     mainLb.pack_forget()
     subtxLb.pack_forget()
     soloBt.pack_forget()
+    playersLsb.pack_forget()
 
 
 def onWait(subtxLb: Label):

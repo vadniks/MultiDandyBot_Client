@@ -129,3 +129,17 @@ def getCurrentGoldAmountOnBoard() -> int | None:
 
     if rsp.status_code != 200: return None
     return int(rsp.text)
+
+
+#                             name score date
+def getSavedPlayers() -> List[Tuple[str, int, int]] | None:
+    try: rsp: rq.Response = rq.get(f'{_HOST}/db',
+            json={'mode': 'select', 'pid': pid})
+    except Exception: return None
+
+    if rsp.status_code != 200: return None
+
+    jsn = json.loads(rsp.text)
+    _list = []
+    [_list.append((i[0], int(i[1]), int(i[2]))) for i in jsn]
+    return _list
