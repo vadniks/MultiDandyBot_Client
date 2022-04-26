@@ -1,7 +1,8 @@
 ﻿"""
 MIT License
-Copyright (c) 2021 Peter Sovietov
+Originally written by Peter Sovietov in 2021
 Forked from https://github.com/true-grue/DandyBot
+Added multiplayer features
 """
 
 import json
