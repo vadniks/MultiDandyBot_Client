@@ -61,6 +61,7 @@ def waitForPlayers(onWait: Callable, onFinish: Callable) -> Callable: # stop
             if (players := checkForPlayers()) is not None:
                 if len(players) > 0 and checkStatus(players) and _isReady:
                     onFinish(players)
+                    break
                 else:
                     onWait(players)
             else:

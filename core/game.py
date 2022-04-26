@@ -267,6 +267,7 @@ def start_game(frame, players, onResize: Callable, script, root):
 
 
 class _BoardStub(_IBoard):
+    def __init__(S): S.players = []
     @overrides
     def getMasterPlayer(S) -> Any: raise Exception()
 
