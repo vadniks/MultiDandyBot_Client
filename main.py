@@ -19,13 +19,13 @@ class App(Frame):
 
 
 if __name__ == '__main__':
-    root = Tk()
-    root.title('Client')
-    root.geometry(f'{WIDTH}x{HEIGHT}')
+    _root = Tk()
+    _root.title('Client')
+    _root.geometry(f'{WIDTH}x{HEIGHT}')
 
-    game.bindKeys(root)
+    game.bindKeys(_root)
 
-    app = App(root)
+    app = App(_root)
     app.mainloop()
 
     sc.saveCurrentPlayerResult()

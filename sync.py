@@ -33,7 +33,8 @@ def connect(_name: str, script: str) -> bool:
         return True
 
 
-def checkForPlayers() -> List[Tuple[int, str]] | None:
+#                                   id   name status
+def checkForPlayers() -> List[Tuple[int, str, bool]] | None:
     try:
         rsp: rq.Response = rq.get(f'{_HOST}/chk/{pid}')
     except Exception: return None
@@ -45,22 +46,30 @@ def checkForPlayers() -> List[Tuple[int, str]] | None:
         return a
 
 
-def waitForPlayers(onFinish: Callable, onWait: Callable = None):
+def waitForPlayers(onWait: Callable, onFinish: Callable) -> Callable: # stop
     global _waiterThread, _canWaitForServer
 
-    def wait():
+    def checkStatus(players: List[Tuple[int, str, bool]]) -> bool:
+        result = True
+        for i in players: result = result and bool(i[2])
+        return result
+
+    def wait(): #TODO: add status to player class in server
         while _canWaitForServer:
-            if (players := checkForPlayers()) \
-                    is not None and len(players) > 0:
-                onFinish(players)
-                break
-            if onWait is not None:
-                onWait()
+            if (players := checkForPlayers()) is not None:
+                if len(players) > 0 and checkStatus(players):
+                    onFinish(players)
+                else:
+                    onWait(players)
+            else:
+                onWait(None)
             sleep(_THRESHOLD)
 
     _waiterThread = Thread(target=wait)
     _waiterThread.daemon = True
     _waiterThread.start()
+
+    return endWaiter
 
 
 def endWaiter():
@@ -148,4 +157,10 @@ def saveCurrentPlayerResult():
     if solo: return
     try: rq.Response = rq.post(f'{_HOST}/db',
             json={'mode': 'insert', 'pid': pid})
+    except Exception: pass
+
+
+def notifyPlayerIsReady():
+    if solo: return
+    try: rq.Response = rq.post(f'{_HOST}/rd/{pid}')
     except Exception: pass

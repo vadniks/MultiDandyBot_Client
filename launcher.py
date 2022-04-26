@@ -7,36 +7,38 @@ import core.game as cr
 from main import SCRIPT_STUB
 
 
-class State(Enum):
+class _State(Enum):
     LAUNCH = 0
     LOBBY = 1
 
 
-frame: Frame
-root: Tk
-mainLb: Label
-subtxLb: Label
-soloBt: Button
-playersLsb: Listbox
+_frame: Frame
+_root: Tk
+_mainLb: Label
+_subtxLb: Label
+_soloBt: Button
+_playersLsb: Listbox
+_readyBt: Button
 
-state: State = State.LAUNCH
+_state: _State = _State.LAUNCH
+_players: List[Tuple[int, str]]
 
 
-def init(_frame: Frame, _root: Tk):
-    global frame, mainLb, root
-    frame = _frame
-    root = _root
+def init(__frame: Frame, __root: Tk):
+    global _frame, _mainLb, _root
+    _frame = __frame
+    _root = __root
 
-    mainLb = Label(frame, text='Welcome', font=("TkDefaultFont", 16))
+    _mainLb = Label(_frame, text='Welcome', font=("TkDefaultFont", 16))
 
-    loginBt = Button(frame, text='Login', width=30)
+    loginBt = Button(_frame, text='Login', width=30)
     loginBt.configure(command=lambda: onLoginBt(nameEn, scriptBx, loginBt))
 
-    nameEn = Entry(frame)
-    scriptBx = Text(frame)
+    nameEn = Entry(_frame)
+    scriptBx = Text(_frame)
     scriptBx.insert('1.0', SCRIPT_STUB)
 
-    mainLb.pack()
+    _mainLb.pack()
     loginBt.pack()
     nameEn.pack()
     scriptBx.pack()
@@ -44,7 +46,7 @@ def init(_frame: Frame, _root: Tk):
 
 def onLoginBt(nameEn: Entry, scriptBx: Text, loginBt: Button):
     name = nameEn.get()
-    root.title('Client : ' + name)
+    _root.title('Client : ' + name)
     script = scriptBx.get('1.0', 'end-1c')
 
     if len(name) == 0 or len(script) == 0:
@@ -57,67 +59,70 @@ def onLoginBt(nameEn: Entry, scriptBx: Text, loginBt: Button):
         msg.showerror(message='Connection failed or name already exists')
 
 
-subtxLb: Label
-soloBt: Button
-
-
 def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
-    global mainLb, state, frame, subtxLb, soloBt
-    state = State.LOBBY
+    global _mainLb, _state, _frame, _subtxLb, _soloBt, _readyBt
+    _state = _State.LOBBY
 
-    mainLb.configure(text='Lobby')
-    mainLb.pack()
+    _mainLb.configure(text='Lobby')
+    _mainLb.pack()
 
     nameEn.pack_forget()
     scriptBx.pack_forget()
     loginBt.pack_forget()
 
-    subtxLb = Label(frame, font=("TkDefaultFont", 10), text='Waiting for players...')
-    subtxLb.pack()
+    _subtxLb = Label(_frame, font=("TkDefaultFont", 10), text='Waiting for players...')
+    _subtxLb.pack()
 
     loadLeaderBoard()
 
     def script(): return scriptBx.get('1.0', 'end')
 
-    soloBt = Button(frame, text='Play solo', width=30, command=lambda: startGame([], script))
-    soloBt.pack()
+    _readyBt = Button(_frame, text='Mark ready', width=30,
+        command=lambda: sc.notifyPlayerIsReady())
+    _readyBt.pack()
 
-    sc.waitForPlayers(lambda players: startGame(players, script), lambda: onWait(subtxLb))
+    _soloBt = Button(_frame, text='Play solo', width=30,
+        command=lambda: startGame(script, True))
+    _soloBt.pack()
+
+    sc.waitForPlayers(lambda players: onWait(players, _subtxLb), lambda: startGame(script, False))
 
 
 def loadLeaderBoard():
-    global playersLsb
-    playersLsb = Listbox(frame)
+    global _playersLsb
+    _playersLsb = Listbox(_frame)
 
     #                  name score
     players: List[Tuple[str, int]] = sc.getSavedPlayers()
-    [playersLsb.insert(END, f'{i[0]} got {i[1]} gold') for i in players]
-    playersLsb.pack()
+    [_playersLsb.insert(END, f'{i[0]} got {i[1]} gold') for i in players]
+    _playersLsb.pack()
 
 
 dx = 0
 
 
 def clearFrame():
-    global mainLb, subtxLb, soloBt, playersLsb
-    mainLb.pack_forget()
-    subtxLb.pack_forget()
-    soloBt.pack_forget()
-    playersLsb.pack_forget()
+    global _mainLb, _subtxLb, _soloBt, _playersLsb
+    _mainLb.pack_forget()
+    _subtxLb.pack_forget()
+    _readyBt.pack_forget()
+    _soloBt.pack_forget()
+    _playersLsb.pack_forget()
 
 
-def onWait(subtxLb: Label):
-    global dx
+#                               id  name status
+def onWait(players: List[Tuple[int, str, bool]], subtxLb: Label):
+    global dx, _players
+    _players = players
+
     tx = subtxLb['text']
     subtxLb['text'] = tx[:-1] + {0: '|', 1: '/', 2: '-', 3: '\\'}[dx]
     dx = 0 if dx == 3 else dx + 1
 
 
-def startGame(players: List[Tuple[int, str]], scriptGetter: Callable):
-    # sc.endWaiter()
-
-    sc.solo = len(players) == 0
-    players.insert(0, (sc.pid, sc.name))
+def startGame(scriptGetter: Callable, solo: bool):
+    sc.solo = len(_players) == 0 or solo
+    _players.insert(0, (sc.pid, sc.name))
 
     clearFrame()
-    cr.start_game(frame, players, lambda w, h: root.geometry(f'{w}x{h}'), scriptGetter(), root)
+    cr.start_game(_frame, _players, lambda w, h: _root.geometry(f'{w}x{h}'), scriptGetter(), _root)
