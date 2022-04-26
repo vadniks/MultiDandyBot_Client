@@ -4,7 +4,7 @@ import sync as sc
 from core import game
 
 WIDTH = 600
-HEIGHT = 300
+HEIGHT = 350
 SCRIPT_STUB = 'def script(check, x, y): pass'
 IS_DEBUG_ENABLED = True
 

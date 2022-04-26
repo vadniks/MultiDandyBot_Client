@@ -14,6 +14,7 @@ _THRESHOLD = 0.5 # seconds
 _waiterThread: Thread
 _canWaitForServer = True
 solo = True
+_isReady = False
 
 
 def connect(_name: str, script: str) -> bool:
@@ -43,21 +44,22 @@ def checkForPlayers() -> List[Tuple[int, str, bool]] | None:
         return None
     else:
         a = json.loads(rsp.text)
-        return a
+        _list = [(int(i[0]), i[1], bool(i[2])) for i in a]
+        return _list
 
 
 def waitForPlayers(onWait: Callable, onFinish: Callable) -> Callable: # stop
-    global _waiterThread, _canWaitForServer
+    global _waiterThread, _canWaitForServer, _isReady
 
     def checkStatus(players: List[Tuple[int, str, bool]]) -> bool:
         result = True
-        for i in players: result = result and bool(i[2])
+        for i in players: result = result and i[2]
         return result
 
-    def wait(): #TODO: add status to player class in server
+    def wait():
         while _canWaitForServer:
             if (players := checkForPlayers()) is not None:
-                if len(players) > 0 and checkStatus(players):
+                if len(players) > 0 and checkStatus(players) and _isReady:
                     onFinish(players)
                 else:
                     onWait(players)
@@ -161,6 +163,7 @@ def saveCurrentPlayerResult():
 
 
 def notifyPlayerIsReady():
-    if solo: return
-    try: rq.Response = rq.post(f'{_HOST}/rd/{pid}')
+    global _isReady
+    _isReady = True
+    try: rq.post(f'{_HOST}/rd/{pid}')
     except Exception: pass
