@@ -202,7 +202,6 @@ class Board(_IBoard):
             def a():
                 if (traced := sc.tracePlayers()) is not None:
                     for i in traced:
-                        print(sc.name, i[1], i[5])
                         self.getPlayer(i[0]).gold = i[5]
                     self.update_score()
             self.root.after(100, a)

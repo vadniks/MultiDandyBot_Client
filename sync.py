@@ -30,7 +30,6 @@ def connect(_name: str, script: str) -> bool:
             return False
 
         pid = int(json.loads(rsp.text)['pid'])
-        print(sid, pid)
         return True
 
 
@@ -71,7 +70,6 @@ def endWaiter():
 
 
 def quitt():
-    print('quit')
     try: rq.post(f'{_HOST}/qt/{pid}')
     except Exception: pass
 
@@ -148,7 +146,6 @@ def getSavedPlayers() -> List[Tuple[str, int]] | None:
 
 def saveCurrentPlayerResult():
     if solo: return
-    print('save')
     try: rq.Response = rq.post(f'{_HOST}/db',
             json={'mode': 'insert', 'pid': pid})
     except Exception: pass

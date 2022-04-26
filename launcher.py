@@ -114,7 +114,6 @@ def onWait(subtxLb: Label):
 
 
 def startGame(players: List[Tuple[int, str]], scriptGetter: Callable):
-    print('dfghj')
     # sc.endWaiter()
 
     sc.solo = len(players) == 0
