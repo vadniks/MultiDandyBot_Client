@@ -75,7 +75,6 @@ def lobby(nameEn: Entry, scriptBx: Text, loginBt: Button):
     subtxLb = Label(frame, font=("TkDefaultFont", 10), text='Waiting for players...')
     subtxLb.pack()
 
-
     loadLeaderBoard()
 
     def script(): return scriptBx.get('1.0', 'end')

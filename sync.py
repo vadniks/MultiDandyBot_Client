@@ -71,6 +71,7 @@ def endWaiter():
 
 
 def quitt():
+    print('quit')
     try: rq.post(f'{_HOST}/qt/{pid}')
     except Exception: pass
 
@@ -143,3 +144,11 @@ def getSavedPlayers() -> List[Tuple[str, int, int]] | None:
     _list = []
     [_list.append((i[0], int(i[1]), int(i[2]))) for i in jsn]
     return _list
+
+
+def saveCurrentPlayerResult():
+    if solo: return
+    print('save')
+    try: rq.Response = rq.post(f'{_HOST}/db',
+            json={'mode': 'insert', 'pid': pid})
+    except Exception: pass

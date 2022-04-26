@@ -8,6 +8,7 @@ HEIGHT = 300
 SCRIPT_STUB = 'def script(check, x, y): pass'
 IS_DEBUG_ENABLED = True
 
+
 # noinspection PyMethodParameters
 class App(Frame):
 
@@ -27,4 +28,5 @@ if __name__ == '__main__':
     app = App(root)
     app.mainloop()
 
+    sc.saveCurrentPlayerResult()
     sc.quitt()
