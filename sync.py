@@ -13,7 +13,7 @@ _HOST = 'http://127.0.0.1:5000'
 _THRESHOLD = 0.5 # seconds
 _waiterThread: Thread
 _canWaitForServer = True
-solo = False
+solo = True
 
 
 def connect(_name: str, script: str) -> bool:
@@ -132,8 +132,8 @@ def getCurrentGoldAmountOnBoard() -> int | None:
     return int(rsp.text)
 
 
-#                             name score date
-def getSavedPlayers() -> List[Tuple[str, int, int]] | None:
+#                                  name score
+def getSavedPlayers() -> List[Tuple[str, int]] | None:
     try: rsp: rq.Response = rq.get(f'{_HOST}/db',
             json={'mode': 'select', 'pid': pid})
     except Exception: return None
@@ -142,7 +142,7 @@ def getSavedPlayers() -> List[Tuple[str, int, int]] | None:
 
     jsn = json.loads(rsp.text)
     _list = []
-    [_list.append((i[0], int(i[1]), int(i[2]))) for i in jsn]
+    [_list.append((i[0], int(i[1]))) for i in jsn]
     return _list
 
 

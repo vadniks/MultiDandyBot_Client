@@ -12,10 +12,10 @@ IS_DEBUG_ENABLED = True
 # noinspection PyMethodParameters
 class App(Frame):
 
-    def __init__(S, root):
-        super(App, S).__init__(root)
+    def __init__(S, _root):
+        super(App, S).__init__(_root)
         S.pack()
-        lc.init(S, root)
+        lc.init(S, _root)
 
 
 if __name__ == '__main__':

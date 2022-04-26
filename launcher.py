@@ -89,9 +89,9 @@ def loadLeaderBoard():
     global playersLsb
     playersLsb = Listbox(frame)
 
-    #                  name score date
-    players: List[Tuple[str, int, int]] = sc.getSavedPlayers()
-    [playersLsb.insert(END, i) for i in players]
+    #                  name score
+    players: List[Tuple[str, int]] = sc.getSavedPlayers()
+    [playersLsb.insert(END, f'{i[0]} got {i[1]} gold') for i in players]
     playersLsb.pack()
 
 
