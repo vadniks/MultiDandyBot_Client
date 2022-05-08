@@ -1,8 +1,8 @@
 ﻿"""
 MIT License
 
-Copyright (c) 2021 Peter Sovietov (https://github.com/true-grue)
-Copyright (c) 2022 Vad Nik (https://github.com/vadniks)
+Copyright (c) 2021 Peter Sovietov (https://github.com/true-grue),
+              2022 Vad Nik (https://github.com/vadniks)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
