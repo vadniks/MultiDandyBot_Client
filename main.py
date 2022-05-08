@@ -7,6 +7,8 @@ WIDTH = 600
 HEIGHT = 350
 SCRIPT_STUB = 'def script(check, x, y): pass'
 IS_DEBUG_ENABLED = True
+# TODO: debugging with "{ python main.py &; } && { python main.py &; } && { python main.py &; }"
+# TODO: to start 3 separate instances of the client in the background
 
 
 # noinspection PyMethodParameters

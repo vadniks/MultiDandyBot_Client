@@ -34,6 +34,8 @@ _EMPTY = "empty"
 
 _KEYS = ('w', 'a', 's', 'd', '<space>')
 
+# TODO: add player disconnection event handling: remove player from board when he disconnects
+
 
 class _IBoard(ABC):
     @abstractmethod
@@ -276,11 +278,11 @@ _iboard = _BoardStub()
 
 
 def bindKeys(root: Tk):
-    root.bind(_KEYS[0], lambda event: _onKeyPressed(_UP))    # w
-    root.bind(_KEYS[1], lambda event: _onKeyPressed(_LEFT))  # a
-    root.bind(_KEYS[2], lambda event: _onKeyPressed(_DOWN))  # s
-    root.bind(_KEYS[3], lambda event: _onKeyPressed(_RIGHT)) # d
-    root.bind(_KEYS[4], lambda event: _onKeyPressed(_TAKE))  # <space>
+    root.bind(_KEYS[0], lambda _: _onKeyPressed(_UP))    # w
+    root.bind(_KEYS[1], lambda _: _onKeyPressed(_LEFT))  # a
+    root.bind(_KEYS[2], lambda _: _onKeyPressed(_DOWN))  # s
+    root.bind(_KEYS[3], lambda _: _onKeyPressed(_RIGHT)) # d
+    root.bind(_KEYS[4], lambda _: _onKeyPressed(_TAKE))  # <space>
 
 
 def _onKeyPressed(key: str):
