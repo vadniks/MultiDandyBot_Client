@@ -192,3 +192,12 @@ def notifyPlayerIsReady():
     _isReady = True
     try: rq.post(f'{_HOST}/rd/{pid}')
     except Exception: pass
+
+
+def hasPlayerLeft(pid: int) -> bool | None:
+    if solo: return None
+    try: rsp: rq.Response = rq.get(f'{_HOST}/hpl/{pid}/{sid}')
+    except Exception: return None
+
+    if rsp.status_code != 200: return None
+    return bool(rsp.text)

@@ -57,7 +57,7 @@ _EMPTY = "empty"
 
 _KEYS = ('w', 'a', 's', 'd', '<space>')
 
-# TODO: add player disconnection event handling: remove player from board when he disconnects
+# TODO: add possibility to play solo without initial connection establishment with the server
 
 
 class _IBoard(ABC):
@@ -187,6 +187,12 @@ class Board(_IBoard):
             player.gold = p[5]
             S.remove_player(player)
             S.add_player(player, p[3], p[4])
+
+        if len(positions) < len(S.players) - 1:
+            for i in S.players:
+                if i.id != sc.pid and sc.hasPlayerLeft(i.id):
+                    S.remove_player(i)
+                    S.players.remove(i)
 
     #                                            pid   x    y
     def updateCurrentBoard(S, takens: List[Tuple[int, int, int]]):
